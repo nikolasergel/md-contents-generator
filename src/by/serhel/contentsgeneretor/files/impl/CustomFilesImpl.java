@@ -35,6 +35,7 @@ public class CustomFilesImpl implements CustomFiles {
         return lines;
     }
 
+    @Override
     public String readString() throws CustomFileException {
         String str = "";
         try {

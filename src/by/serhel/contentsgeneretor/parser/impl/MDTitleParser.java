@@ -10,18 +10,26 @@ import java.util.stream.Stream;
 public class MDTitleParser implements CustomParser {
     public static final int MAX_HASHES_IN_TITLE = 6;
     public static final String NOT_REFERENCE_SYMBOLS = "[^a-z\\d\\-_]";
+    public static final String WHITESPACE_REGEX = "\\s";
 
     @Override
     public List<CustomNode> parse(Stream<String> lines) {
-        return streamToCustomNodeList(lines);
+        List<CustomNode> nodes = lines.map(line -> {
+            int level = getCalculateTitleLevel(line);
+            String reference = toMDReference(line, level);
+            String name = line.substring(level).trim();
+            return new CustomNode(name, reference, level);
+        })
+                .collect(Collectors.toList());
+        return nodes;
     }
 
     public String toMDReference(String title, int titleLevel){
-        title.trim();
+        title = title.trim();
         String reference = new String(title.substring(titleLevel));
         reference = reference.trim();
         reference = reference.toLowerCase();
-        reference = reference.replaceAll("\\s", "-");
+        reference = reference.replaceAll(WHITESPACE_REGEX, "-");
         reference = reference.replaceAll(NOT_REFERENCE_SYMBOLS, "");
         return reference;
     }
@@ -36,16 +44,5 @@ public class MDTitleParser implements CustomParser {
             level++;
         }
         return level;
-    }
-
-    private List<CustomNode> streamToCustomNodeList(Stream<String> titles){
-        List<CustomNode> nodes = titles.map(line -> {
-                    int level = getCalculateTitleLevel(line);
-                    String reference = toMDReference(line, level);
-                    String name = line.substring(level).trim();
-                    return new CustomNode(name, reference, level);
-                })
-                .collect(Collectors.toList());
-        return nodes;
     }
 }

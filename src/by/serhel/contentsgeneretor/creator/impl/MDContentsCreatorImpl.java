@@ -13,9 +13,9 @@ public class MDContentsCreatorImpl implements MDContentsCreator {
         return builder.toString();
     }
 
-    public int getIndexed(List<CustomNode> nodes, int index, StringBuilder builder, int tabCount){
+    private int getIndexed(List<CustomNode> nodes, int index, StringBuilder builder, int tabCount){
         int count = 1;
-        addString(builder, "\t", tabCount);
+        addTabs(builder, tabCount);
         CustomNode buff = nodes.get(index);
         builder.append(count + ". [" + buff.getName() + "](#" + buff.getReference() + ")\n");
         count++;
@@ -26,17 +26,22 @@ public class MDContentsCreatorImpl implements MDContentsCreator {
                 index = getIndexed(nodes, index, builder, tabCount + 1) - 1;
             }
             else{
-                addString(builder, "\t", tabCount);
-                builder.append(count + ". [" + buff.getName() + "](#" + buff.getReference() + ")\n");
+                addTabs(builder, tabCount);
+                builder.append(count)
+                        .append(". [")
+                        .append(buff.getName())
+                        .append("](#")
+                        .append(buff.getReference())
+                        .append(")\n");
                 count++;
             }
         }
         return index;
     }
 
-    private void addString(StringBuilder builder, String str, int count){
+    private void addTabs(StringBuilder builder, int count){
         for(int i = 0; i < count; i++){
-            builder.append(str);
+            builder.append("\t");
         }
     }
 }
